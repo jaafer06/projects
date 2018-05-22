@@ -5,10 +5,6 @@ class PreviewLine extends Path {
     this.text.remove();
   }
 
-  update() {
-
-  }
-
   render(event) {
     this.addTo(project);
     this.removeSegments();
@@ -64,6 +60,5 @@ class PreviewLine extends Path {
     this.strokeWidth = 1 + line_length / 250;
     this.strokeColor = gradientColor;
     this.text.strokeColor = gradientColor;
-
   }
 }

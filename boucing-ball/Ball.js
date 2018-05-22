@@ -22,5 +22,4 @@ class Ball extends Path {
     super.remove();
   }
 
-
 }
