@@ -3,12 +3,12 @@ window.onload = function() {
 
   paper.setup("myCanvas");
   view.onFrame = run;
-  console.log(view.background);
   init();
 
 }
 
 function run() {
+
   for (var i = 0; i < project.activeLayer.children.length; i++) {
     if (project.activeLayer.children[i] instanceof Ball) {
 
@@ -37,6 +37,7 @@ function init() {
   new Boundary(new Point(-1, 0), new Point(view.bounds.width, 0), new PointText(view.bounds.width, view.bounds.width)).render();
   let b = new Ball(new Point(50, 50), 10, "blue", new Point(0, -1));
   b.render();
+
 }
 
 
@@ -50,6 +51,30 @@ function wall_interatction(ball, wall) {
 
 }
 
+function balls_interactions(balls) {
+  let v = balls.map(b => b.velocity);
+  let n = balls.length;
+  for (var index in balls) {
+    v[index].normalize(v[index].length / 2);
+  }
+  let new_v = [];
+  for (var i in v) {
+    new_v.push(new Point(0, 0));
+    new_v[i] = minus(v[i]);
+    for (var j in v) {
+      new_v[i] = add(new_v[i], v[j])
+    }
+  }
+
+  for (var index in balls) {
+    new_v[index].length = balls[index].velocity.length;
+    balls[index].velocity = new_v[index];
+
+  }
+  console.log(new_v);
+
+}
+
 function balls_interaction(ball1, ball2) {
 
   let v1 = ball1.velocity;
@@ -58,12 +83,13 @@ function balls_interaction(ball1, ball2) {
   v2.normalize(v2.length / 2);
   let new_v1 = add(minus(v1), v2);
   let new_v2 = add(minus(v2), v1);
-  new_v1.normalize(ball1.velocity);
-  new_v2.normalize(ball2.velocity);
+  new_v1.length = ball1.velocity.length / 2 + ball2.velocity.length / 2;
+  new_v2.length = ball1.velocity.length / 2 + ball2.velocity.length / 2;
+
 
   ball1.velocity = new_v1;
   ball2.velocity = new_v2;
-
+  
 }
 
 function add(vector1, vecotor2) {

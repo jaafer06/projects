@@ -4,6 +4,7 @@ class Ball extends Path {
     super();
     var temp = new Path.Circle(center, radius);
     this.fillColor = color;
+    this.ignore = false;
     this.copyContent(temp);
     temp.remove();
     this.velocity = velocity;
