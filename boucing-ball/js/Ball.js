@@ -2,11 +2,12 @@ class Ball extends Path {
 
   constructor(center, radius, color, velocity) {
     super();
-    var temp = new Path.Circle(center, radius);
+    var temp = Path.Circle(center, radius);
     this.fillColor = color;
-    this.ignore = false;
+    this.ignore = null;
     this.copyContent(temp);
     temp.remove();
+    this.radius = radius;
     this.velocity = velocity;
   }
 

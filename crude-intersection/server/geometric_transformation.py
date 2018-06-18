@@ -1,2 +1,0 @@
-from polyhedron import Polyhedron
-

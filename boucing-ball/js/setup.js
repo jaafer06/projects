@@ -86,10 +86,12 @@ function balls_interaction(ball1, ball2) {
   new_v1.length = ball1.velocity.length / 2 + ball2.velocity.length / 2;
   new_v2.length = ball1.velocity.length / 2 + ball2.velocity.length / 2;
 
+  let d = add(add(new_v1, ball2.position), minus(add(new_v2, ball1.position)))
 
   ball1.velocity = new_v1;
   ball2.velocity = new_v2;
-  
+
+
 }
 
 function add(vector1, vecotor2) {
