@@ -18,7 +18,8 @@ function run() {
 }
 
 function init() {
-  blocks[0] = new Block(30, 30, "red");
+  let c = new Color(Math.random(), Math.random(),Math.random());
+  blocks[0] = new Block(30, 30, c);
   for (var i = 1; i < blocks.length; i++) {
     let c = new Color(Math.random(), Math.random(),Math.random());
     blocks[i] = new Block(30, 30, c, blocks[i-1], 3);

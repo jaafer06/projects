@@ -12,7 +12,8 @@ class Block extends Path {
 
   update() {
     if(this.follows) {
-      this.position.y += 5;
+      let y_to_travel = this.follows.y - this.position.y
+      this.position.y += 0.2;
       let follow_vector = this.sub(this.follows.position, this.position);
       follow_vector.length -= this.distance;
       this.position = this.add(this.position, follow_vector);
