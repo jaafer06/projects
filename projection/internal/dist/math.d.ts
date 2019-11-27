@@ -1,0 +1,17 @@
+import { Point } from 'paper';
+export declare type Vector3D = [number, number, number];
+export declare type Matrix3D = [Vector3D, Vector3D, Vector3D];
+export declare function inverse(matrix: Matrix3D): Matrix3D;
+export declare function transpose(matrix: Matrix3D): Matrix3D;
+export declare function multiply(target: Vector3D, scalar: number): Vector3D;
+export declare function multiplyMatrices(m1: Matrix3D, m2: Matrix3D): Matrix3D;
+export declare function multiplyMatrixColumnsBy(v: Vector3D, m: Matrix3D): [[number, number, number], [number, number, number], [number, number, number]];
+export declare function augmentAndMultiply(matrix: Matrix3D, point: Point): Point;
+export declare function identity(): Matrix3D;
+export declare function solve(matrix: Matrix3D, vector: Vector3D): Vector3D;
+export declare function toInfinitePoint(vector: Vector3D): Vector3D;
+export declare function crossProduct(v1: Vector3D, v2: Vector3D): [number, number, number];
+export declare function toHomogeneousCoordinates(p: Point): Vector3D;
+export declare function toNormalCoordinates(v: Vector3D): Point;
+export declare function clone(v: Vector3D): Vector3D;
+export declare function cloneAndSet(v: Vector3D, index: 0 | 1 | 2, value: number): [number, number, number];

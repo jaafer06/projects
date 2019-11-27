@@ -18,8 +18,6 @@ class Vector extends Path {
     let line_length = Math.sqrt(dx * dx + dy * dy);
 
     this.add(new Point(0, 0), new Point(line_length, 0));
-    this.add(new Point(line_length, 0.0001), new Point(line_length - 5, 5));
-    this.add(new Point(line_length, 0.0001), new Point(line_length - 5, -5));
 
     this.text = new PointText(new Point(line_length / 2, -8));
     this.text.justification = 'center';

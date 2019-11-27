@@ -25,10 +25,12 @@ function run() {
     iterations = Math.round(iterations) + 1;
     var lines = [];
     
-    lines.push(new Line(new Point(0, height/2), new Point(width, height/2), precision));
-    lines.push(new Line(new Point(width/2, 0), new Point(width/2, height), precision));
-
-    for(let i=0; i<iterations; ++i) {
+    let x_axis = new Line(new Point(0, height/2), new Point(width, height/2), precision);
+    let y_axis = new Line(new Point(width/2, 0), new Point(width/2, height), precision);
+    lines.push(x_axis);
+    lines.push(y_axis);
+    
+    for(let i=1; i<iterations; ++i) {
 
         let positiveVerticalFrom = new Point(center.x + i*unit, 0);
         let positiveVerticalTo = new Point(center.x + i*unit, height);
@@ -55,13 +57,14 @@ function run() {
     paper.view.onClick = () => {
         
         let center = paper.view.center;
-        
         let f_x = (x,y) => {
-            return x*Math.log(y*y);
+            let angle = Math.atan2(y, x);
+            return x;
         };
     
         let f_y = (x,y) => {
-            return y*x;
+            let angle = Math.atan2(y, x);
+            return y*y*Math.sin(y);
         }
 
         for(let i in lines) {
@@ -134,4 +137,16 @@ function interesting3() {
         return y*x;
     }
 
+}
+
+function almostCircle() {
+    let f_x = (x,y) => {
+        let angle = Math.atan2(y, x);
+        return Math.sin(angle)*x*x;
+    };
+
+    let f_y = (x,y) => {
+        let angle = Math.atan2(y, x);
+        return x*x*Math.cos(angle);
+    }
 }
