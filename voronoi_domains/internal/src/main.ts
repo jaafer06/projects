@@ -23,68 +23,62 @@ function getHyperplane(p1: Point, p2: Point, direction: -1|1) {
         x = -x;
         y = -y;
     }
-    x *= direction;
-    y *= direction;
     
     let r = new geo.HyperPlane(x, y, (x*p1.x + y*p1.y))    
     newLine(...r.a.asArray);
+    r.draw();
     return r;
 }
 
-let hyperplanes: geo.HyperPlane[] = [];
 
 function createLineAndHyperPlane(p: Point, pp: Point) {
-    let l = new Path.Line(p, pp);
     hyperplanes.push(getHyperplane(p, pp, 1));
-    l.strokeWidth = 3;
-    l.strokeColor = "black";
 }
 
-
+let hyperplanes: geo.HyperPlane[] = [];
+let points: geo.Vector2D[] = [];
 
 window.onload = function() {
     
     paper.setup("myCanvas");
     paper.view.center = new Point(0, 0);
-    let c = new Path.Circle(paper.view.center, 5);
-    c.fillColor = "red";
-    let firstClick = true;
+    new Path.Circle(paper.view.center, 5).fillColor = "red";
     let downPoint: Point;
-    createLineAndHyperPlane(new Point(-133, -104), new Point(177, -67));
-    createLineAndHyperPlane(new Point(124, -143), new Point(82, 145));
-    createLineAndHyperPlane(new Point(-178, 114), new Point(144, 122));
-    createLineAndHyperPlane(new Point(-114, 182), new Point(-102, -143));
-    createLineAndHyperPlane(new Point(50, -136), new Point(135, 2));
+
+    // createLineAndHyperPlane(new Point(-133, -104), new Point(177, -67));
+    // createLineAndHyperPlane(new Point(124, -143), new Point(82, 145));
+    // createLineAndHyperPlane(new Point(-178, 114), new Point(144, 122));
+    // createLineAndHyperPlane(new Point(-114, 182), new Point(-102, -143));
+    // createLineAndHyperPlane(new Point(50, -136), new Point(135, 2));
+
 
     paper.view.onClick = (event: paper.MouseEvent) => {
-        let direction: -1|1 = event.modifiers.control? -1: 1;
+       
         if(event.modifiers.alt) {
-            let convexRegion = geo.convexHull(hyperplanes);
-            
-            for(let p of convexRegion) {
-                let c = new Path.Circle(new Point(p.x, p.y), 5);
-                c.fillColor = "blue";
+            const result = geo.computeVoronoiDomains(points);
+            for(let rr of result) {
+                for(let r of rr) {
+                    r.draw();
+                }
+                const convexHull = geo.convexHull(rr);
+                for(let p of convexHull) {
+                    new Path.Circle(new Point(p.asArray), 5).fillColor = "blue";
+                }
+                break;
+               
             }
+            
             return;
         };
         
         if(event.modifiers.shift) {
+            
             return;
         }
         
-        if(firstClick) {
-            downPoint = event.point;
-            firstClick = !firstClick;
-            return;
-        } else {
-            firstClick = !firstClick;
-            let l = new Path.Line(downPoint, event.point);
-            console.log(downPoint, event.point);
-            
-            hyperplanes.push(getHyperplane(downPoint, event.point, direction));
-            l.strokeWidth = 3;
-            l.strokeColor = "black";
-        }
+        points.push(new geo.Vector2D(event.point.x, event.point.y));
+        new Path.Circle(event.point, 5).fillColor = "green";
     }
+
     
 }

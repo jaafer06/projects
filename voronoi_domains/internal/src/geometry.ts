@@ -23,6 +23,20 @@ export class Vector2D {
         return this.asArray[1];
     }
 
+    multiply(scalar: number) {
+        this.asArray[0] *= scalar;
+        this.asArray[1] *= scalar;  
+    }
+
+    add(other: Vector2D) {
+        this.asArray[0] += other.x;
+        this.asArray[1] += other.y;  
+    }
+
+    clone() {
+        return new Vector2D(this.x, this.y);
+    }
+
 }
 
 export class HyperPlane {
@@ -54,7 +68,22 @@ export class HyperPlane {
     isInside(point: Vector2D) {
         // console.log(point.dot(this.a), this.beta);
         
-        return point.dot(this.a) <= this.beta;
+        return point.dot(this.a) <= this.beta+0.0005;
+    }
+
+    public draw() {
+        const firstPoint = this.a.clone();
+        firstPoint.multiply(this.beta);
+        const v1: Vector2D = new Vector2D(-firstPoint.y, firstPoint.x );
+        const v2: Vector2D = new Vector2D(firstPoint.y, -firstPoint.x );
+        v2.multiply(100);
+        v1.multiply(100);
+        v1.add(firstPoint);
+        v2.add(firstPoint);
+        const [x,y, xx, yy] = [...v1.asArray, ...v2.asArray];
+        const l = new Path.Line(new Point(v1.asArray), new Point(v2.asArray));
+        l.strokeWidth = 3;
+        l.strokeColor = "black";
     }
 
 }
@@ -92,6 +121,9 @@ function arrangeClockWise(hyperplanes: HyperPlane[]) {
 }
 
 export function findFeasibleVertex(hyperplanes: HyperPlane[]) {
+    if(hyperplanes.length <3) {
+        return {h: hyperplanes[0], index: 0};
+    }
     for(let i =1; i<hyperplanes.length-1; ++i) {
         const hit = hyperplanes[i].intersect(hyperplanes[i-1]);
         if(hit && isInConvexHull(hyperplanes, hit)) {
@@ -104,7 +136,8 @@ export function findFeasibleVertex(hyperplanes: HyperPlane[]) {
         }
     
     }
-
+    console.log(hyperplanes);
+    
     throw "impossible";
 }
 
@@ -113,14 +146,13 @@ export function convexHull(hyperplanes: HyperPlane[]) {
     hyperplanes = arrangeClockWise(hyperplanes);
     
     const result = findFeasibleVertex(hyperplanes);
-    console.log(result);
     
     let currentIndex = result.index;
     let currentHyperPlaneForward = result.h;
     while (currentIndex < hyperplanes.length-1) {
         const r = currentHyperPlaneForward.intersect(hyperplanes[currentIndex+1]);
-        console.log("forward" , r, isInConvexHull(hyperplanes, r as Vector2D));
-        
+        // console.log("forward" , r, isInConvexHull(hyperplanes, r as Vector2D));
+       
         if(r && isInConvexHull(hyperplanes, r)) {
             convexRegion.push(r);
             currentHyperPlaneForward = hyperplanes[currentIndex+1];
@@ -133,7 +165,7 @@ export function convexHull(hyperplanes: HyperPlane[]) {
     let currentHyperPlaneBackward = result.h;
     while (currentIndex > 0) {
         const r = currentHyperPlaneBackward.intersect(hyperplanes[currentIndex-1]);
-        console.log("backward" , r, isInConvexHull(hyperplanes, r as Vector2D));
+        // console.log("backward" , r, isInConvexHull(hyperplanes, r as Vector2D));
         
         if(r && isInConvexHull(hyperplanes, r)) {
             convexRegion.unshift(r);
@@ -147,4 +179,24 @@ export function convexHull(hyperplanes: HyperPlane[]) {
         convexRegion.unshift(last);
     }
     return convexRegion;
+}
+
+export function computeVoronoiDomains(points: Vector2D[]) {
+    let result: Array<Array<HyperPlane>> = Array.from({length: points.length}, () => ([]))
+    
+    for(let i=0;i<points.length; ++i) {
+        for(let j=0;j<points.length; ++j) {
+            if(j !== i) {
+                result[i].push(seperationHyperPlane(points[i], points[j]));                
+            }
+        }
+    }
+    return result;
+}
+
+function seperationHyperPlane(p1: Vector2D, p2: Vector2D) {
+    const x = p2.x - p1.x;
+    const y = p2.y - p1.y;
+    const beta = ((p2.x + p1.x)/2) * x + ((p2.y + p1.y)/2) * y;
+    return new HyperPlane(x,y, beta);
 }
