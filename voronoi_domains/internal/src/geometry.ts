@@ -1,8 +1,9 @@
 import * as math from "mathjs";
-import { Path, Point } from "paper";
+import { Path, Point, Color } from "paper";
 
 export class Vector2D {
-    public readonly asArray: [number, number];
+    public asArray: [number, number];
+    public circle: Path.Circle | undefined;
     constructor(x: number, y: number, draw: boolean = false) {
         this.asArray = [x, y]
         if(draw) {
@@ -46,9 +47,10 @@ export class Vector2D {
     }
 
     draw(color: string = "green") {
-        const d = new Path.Circle(new Point(this.asArray), 10);
+        if(this.circle) return;
+        const d = new Path.Circle(new Point(this.asArray), 5);
         d.fillColor = color;
-        return d;
+        this.circle = d;
     }
 
 }
@@ -233,14 +235,18 @@ function drawPointAndDirection(x: number, y: number, xd: number, yd: number) {
     new Vector2D(x, y).draw("yellow");
 
 }
-export function convexHull(hyperplanes: HyperPlane[], path: Path, color: string = "black") {
+export function convexHull(hyperplanes: HyperPlane[], path: Path, color?: string|Color|null) {
     hyperplanes = arrangeClockWise(hyperplanes);
     let [x, y, xd, yd, h] = findFeasibleVertex(hyperplanes);
     const startingHyperplane = h;
     path.removeSegments();
+    const maxIteration = 30;
+    let i = 0;
     do {
         path.add(new Point(x, y));
-        path.strokeColor = color;
+        if(color)  {
+            path.strokeColor = color;
+        }
         path.strokeWidth = 2;
         const result = computeNexPoint(hyperplanes, h, x, y, xd, yd);
         if(result) {
@@ -249,16 +255,22 @@ export function convexHull(hyperplanes: HyperPlane[], path: Path, color: string 
             console.log("unexpected");
             return;
         }
+        ++i;
+        if(i == maxIteration) {
+            console.log("max iterations reached");
+            return;
+        }
       
     } while(startingHyperplane!= h);
     path.closed = true;
     
 }
 
-export function computeVoronoiDomains(points: Vector2D[]) {
+export function computeVoronoiDomains(points: Vector2D[], additionalHyperPlanes: HyperPlane[] = []) {
     let result: Array<Array<HyperPlane>> = Array.from({length: points.length}, () => ([]))
     
     for(let i=0;i<points.length; ++i) {
+        result[i] = new Array(...additionalHyperPlanes);
         for(let j=0;j<points.length; ++j) {
             if(j !== i) {
                 result[i].push(seperationHyperPlane(points[i], points[j]));                

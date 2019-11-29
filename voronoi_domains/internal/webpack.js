@@ -1,11 +1,9 @@
-const path = require('path');
+const path = require("path");
 
 module.exports = {
     entry: {
         main:"./src/main.ts"
     },
- 
-    mode: "production",
 
     module: {
         rules: [
@@ -13,6 +11,7 @@ module.exports = {
             test: /\.ts?$/,
             loader: ['babel-loader', 'ts-loader'],
             exclude: /node_modules/,
+            
           }
         ]
       },
@@ -22,5 +21,10 @@ module.exports = {
     output: {
         filename: "[name]-bundle.js",
         path: path.resolve(__dirname, "./dist"),
+        publicPath: "/"
     },
-};
+    devServer: {
+        contentBase: "dist",
+    }
+}
+ 
