@@ -47,7 +47,7 @@ window.onload = function() {
 
     const width = rect.width;
     const height = rect.height;
-    for(let i=0; i<50; ++i) {
+    for(let i=0; i<3; ++i) {
         points.push(new geo.Vector2D(width/2- Math.random()*width, height/2 -Math.random()*height, true));
     }
     update();
@@ -67,6 +67,7 @@ window.onload = function() {
         }
         
         points.push(new geo.Vector2D(event.point.x, event.point.y, true));
+        update();
         
     }
 

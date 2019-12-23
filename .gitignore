@@ -1,4 +1,5 @@
 function-visualization/node_modules/
 function-visualization/dist/main-bundle.js
 projection/internal/node_modules/
+geometry/node_modules/
 voronoi_domains/internal/node_modules/
