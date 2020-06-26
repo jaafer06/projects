@@ -3,6 +3,7 @@ import { Cube } from "./scene";
 import { Camera } from "./camera";
 import * as obj from "./obj";
 import { Shape } from "./shape";
+import { plane } from "./plane"
 
 let canvas: CanvasRenderingContext2D;
 let angle = 0;
@@ -49,14 +50,29 @@ window.addEventListener("mousemove", (event) => {
 
 window.onload = () => {
     const htmlCanvas = document.querySelector("canvas");
-    const submitButton = document.querySelector("button");
-    camera.translate(new Vector([-5000, -2050, -2000]));
+    const submitButton = document.getElementById("parse");
+    const exampleButton = document.getElementById("example");
+
+    camera.translate(new Vector([-80000, -18050, -10000]));
     if (submitButton) {
         submitButton.onclick = () => {
             let shape = obj.parse(document.querySelector("textarea")?.value || "");
             shapes.push(shape);
             shape.scale(100);
             shape.translate(new Vector([400, 100, 100]));      
+        };
+    }
+
+    if (exampleButton) {
+        exampleButton.onclick = () => {
+            let shape = obj.parse(plane)
+            shapes.push(shape);
+            shape.scale(100);
+            shape.translate(new Vector([400, 100, 100]));
+            const input = document.querySelector("textarea");
+            if (input) {
+                input.value = plane;
+            }
         };
     }
     
